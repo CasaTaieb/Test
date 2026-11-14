@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Maison</title>
+<!--
+  Tableau de bord Home Assistant pour vieil iPad (iOS 9 / Safari 9).
+  Volontairement écrit en ES5 pur : pas de let/const, pas de fonctions fléchées,
+  pas de fetch, pas de template literals, pas de CSS grid.
+  À placer dans /config/www/ de Home Assistant -> http://IP_HA:8123/local/dashboard.html
+-->
+<style>
+  html, body { margin: 0; padding: 0; background: #111; color: #eee;
+    font-family: -apple-system, "Helvetica Neue", Helvetica, sans-serif;
+    -webkit-user-select: none; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  #top { display: -webkit-flex; display: flex; -webkit-justify-content: space-between;
+    justify-content: space-between; -webkit-align-items: center; align-items: center;
+    padding: 14px 20px; font-size: 20px; }
+  #clock { font-size: 44px; font-weight: 200; }
+  #status { font-size: 14px; color: #888; }
+  #status.err { color: #e66; }
+  #grid { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap;
+    padding: 0 10px 10px; }
+  .tile { -webkit-box-sizing: border-box; box-sizing: border-box; width: 23%; margin: 1%;
+    height: 150px; border-radius: 14px; background: #2a2a2a; padding: 14px;
+    display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column;
+    -webkit-justify-content: space-between; justify-content: space-between; }
+  .tile.on { background: #e8a93a; color: #111; }
+  .tile.unavailable { opacity: .35; }
+  .tile.pressed { -webkit-transform: scale(.96); transform: scale(.96); }
+  .name { font-size: 18px; line-height: 1.2; }
+  .state { font-size: 28px; font-weight: 300; }
+  .btns { display: -webkit-flex; display: flex; }
+  .btns span { -webkit-flex: 1; flex: 1; text-align: center; font-size: 26px;
+    background: rgba(255,255,255,.12); border-radius: 8px; margin: 0 3px; padding: 6px 0; }
+</style>
+</head>
+<body>
+<div id="top"><span id="clock">--:--</span><span id="status">Connexion…</span></div>
+<div id="grid"></div>
+
+<script>
+/* ======================= CONFIGURATION ======================= */
+var CONFIG = {
+  // Laisser vide si la page est servie par Home Assistant lui-même (/local/...).
+  // Sinon : "http://192.168.1.10:8123" (préférer http en local : iOS 9 ne reconnaît
+  // pas les certificats Let's Encrypt récents).
+  url: "",
+  // Jeton longue durée : Profil HA > Sécurité > Jetons d'accès longue durée.
+  // Créez un utilisateur HA dédié NON administrateur pour cet iPad.
+  token: "COLLEZ_VOTRE_JETON_ICI",
+  refreshSeconds: 5,
+  // Vos entités. "name" est facultatif (sinon friendly_name de HA).
+  entities: [
+    { id: "light.salon",            name: "Salon" },
+    { id: "light.cuisine",          name: "Cuisine" },
+    { id: "switch.prise_tv",        name: "TV" },
+    { id: "cover.volet_salon",      name: "Volet salon" },
+    { id: "scene.soiree",           name: "Soirée" },
+    { id: "sensor.temperature_salon", name: "Temp. salon" }
+  ]
+};
+/* ============================================================= */
+
+var TOGGLE_DOMAINS = { light: 1, "switch": 1, input_boolean: 1, fan: 1, automation: 1 };
+var tiles = {};
+
+function api(method, path, body, cb) {
+  var xhr = new XMLHttpRequest();
+  xhr.open(method, CONFIG.url + path, true);
+  xhr.setRequestHeader("Authorization", "Bearer " + CONFIG.token);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.timeout = 8000;
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) return;
+    if (xhr.status >= 200 && xhr.status < 300) {
+      var data = null;
+      try { data = JSON.parse(xhr.responseText); } catch (e) {}
+      cb(null, data);
+    } else {
+      cb(xhr.status || "réseau");
+    }
+  };
+  xhr.send(body ? JSON.stringify(body) : null);
+}
+
+function callService(domain, service, entityId) {
+  api("POST", "/api/services/" + domain + "/" + service, { entity_id: entityId }, function (err) {
+    if (err) setStatus("Erreur commande (" + err + ")", true);
+    setTimeout(refresh, 400);
+  });
+}
+
+function setStatus(text, isErr) {
+  var s = document.getElementById("status");
+  s.textContent = text;
+  s.className = isErr ? "err" : "";
+}
+
+function el(tag, cls, text) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function press(node, fn) {
+  node.addEventListener("click", function (ev) {
+    ev.stopPropagation();
+    node.className += " pressed";
+    setTimeout(function () { node.className = node.className.replace(" pressed", ""); }, 150);
+    fn();
+  }, false);
+}
+
+function buildTiles() {
+  var grid = document.getElementById("grid");
+  for (var i = 0; i < CONFIG.entities.length; i++) {
+    (function (cfg) {
+      var domain = cfg.id.split(".")[0];
+      var tile = el("div", "tile");
+      var name = el("div", "name", cfg.name || cfg.id);
+      var state = el("div", "state", "…");
+      tile.appendChild(name);
+      tile.appendChild(state);
+
+      if (TOGGLE_DOMAINS[domain]) {
+        press(tile, function () { callService("homeassistant", "toggle", cfg.id); });
+      } else if (domain === "scene" || domain === "script") {
+        press(tile, function () { callService(domain, "turn_on", cfg.id); });
+      } else if (domain === "cover") {
+        var btns = el("div", "btns");
+        var up = el("span", "", "▲"), stop = el("span", "", "■"), down = el("span", "", "▼");
+        press(up,   function () { callService("cover", "open_cover",  cfg.id); });
+        press(stop, function () { callService("cover", "stop_cover",  cfg.id); });
+        press(down, function () { callService("cover", "close_cover", cfg.id); });
+        btns.appendChild(up); btns.appendChild(stop); btns.appendChild(down);
+        tile.appendChild(btns);
+      }
+      grid.appendChild(tile);
+      tiles[cfg.id] = { cfg: cfg, domain: domain, tile: tile, name: name, state: state };
+    })(CONFIG.entities[i]);
+  }
+}
+
+function label(t, s) {
+  var st = s.state, unit = s.attributes && s.attributes.unit_of_measurement;
+  if (t.domain === "scene" || t.domain === "script") return "▶";
+  if (st === "on") return "Allumé";
+  if (st === "off") return "Éteint";
+  if (st === "open") return "Ouvert";
+  if (st === "closed") return "Fermé";
+  if (st === "opening") return "Ouverture…";
+  if (st === "closing") return "Fermeture…";
+  if (st === "unavailable") return "Indispo.";
+  return st + (unit ? " " + unit : "");
+}
+
+function refresh() {
+  api("GET", "/api/states", null, function (err, list) {
+    if (err) { setStatus(err === 401 ? "Jeton refusé (401)" : "Hors ligne (" + err + ")", true); return; }
+    var byId = {};
+    for (var i = 0; i < list.length; i++) byId[list[i].entity_id] = list[i];
+    for (var id in tiles) {
+      if (!tiles.hasOwnProperty(id)) continue;
+      var t = tiles[id], s = byId[id];
+      if (!s) { t.state.textContent = "Introuvable"; t.tile.className = "tile unavailable"; continue; }
+      if (!t.cfg.name && s.attributes && s.attributes.friendly_name) t.name.textContent = s.attributes.friendly_name;
+      t.state.textContent = label(t, s);
+      var cls = "tile";
+      if (s.state === "on" || s.state === "open") cls += " on";
+      if (s.state === "unavailable") cls += " unavailable";
+      t.tile.className = cls;
+    }
+    var d = new Date();
+    setStatus("Mis à jour " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()), false);
+  });
+}
+
+function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+function tick() {
+  var d = new Date();
+  document.getElementById("clock").textContent = pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+
+buildTiles();
+tick();
+refresh();
+setInterval(tick, 10000);
+setInterval(refresh, CONFIG.refreshSeconds * 1000);
+// Recharge complète toutes les 6 h pour limiter les fuites mémoire de Safari 9 (512 Mo de RAM).
+setTimeout(function () { location.reload(); }, 6 * 3600 * 1000);
+</script>
+</body>
+</html>
