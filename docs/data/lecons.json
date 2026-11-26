@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "updated": "2026-11-26",
+  "themes": [
+    "Organes et anatomie",
+    "Symptômes",
+    "Antécédents et terrain",
+    "Soignants, patients, traitements",
+    "En consultation",
+    "Système de santé israélien",
+    "Maladies et diagnostics",
+    "Examens"
+  ],
+  "vocab": [
+    {"id": "lev", "he": "לֵב", "tr": "lev", "fr": "cœur", "theme": "Organes et anatomie", "ex": []},
+    {"id": "reot", "he": "רֵאוֹת", "tr": "re'ot", "fr": "poumons", "note": "sg. רֵאָה (re'a)", "theme": "Organes et anatomie", "ex": []},
+    {"id": "haze", "he": "חָזֶה", "tr": "haze", "fr": "thorax, poitrine", "theme": "Organes et anatomie", "ex": []},
+    {"id": "beten", "he": "בֶּטֶן", "tr": "beten", "fr": "ventre", "theme": "Organes et anatomie", "ex": []},
+    {"id": "rosh", "he": "רֹאשׁ", "tr": "rosh", "fr": "tête", "theme": "Organes et anatomie", "ex": []},
+    {"id": "dam", "he": "דָּם", "tr": "dam", "fr": "sang", "theme": "Organes et anatomie", "ex": [
+      ["לַחַץ דָּם", "lahats dam", "tension artérielle"]
+    ]},
+    {"id": "kaved", "he": "כָּבֵד", "tr": "kaved", "fr": "foie", "theme": "Organes et anatomie", "ex": [
+      ["דַּלֶּקֶת כָּבֵד", "daleket kaved", "hépatite"],
+      ["כָּבֵד שׁוּמָנִי", "kaved shumani", "stéatose"]
+    ]},
+    {"id": "kilya", "he": "כִּלְיָה", "tr": "kilya", "fr": "rein", "note": "pl. כְּלָיוֹת (klayot)", "theme": "Organes et anatomie", "ex": [
+      ["אִי סְפִיקַת כְּלָיוֹת", "i-sfikat klayot", "insuffisance rénale"],
+      ["אַבְנֵי כְּלָיוֹת", "avnei klayot", "lithiase rénale"]
+    ]},
+
+    {"id": "keev", "he": "כְּאֵב", "tr": "ke'ev", "fr": "douleur", "theme": "Symptômes", "ex": [
+      ["כּוֹאֵב לִי", "ko'ev li", "j'ai mal"],
+      ["כְּאֵבִים בַּחָזֶה", "ke'evim ba-haze", "douleur thoracique"]
+    ]},
+    {"id": "hom", "he": "חֹם", "tr": "hom", "fr": "fièvre", "theme": "Symptômes", "ex": []},
+    {"id": "kotser-neshima", "he": "קֹצֶר נְשִׁימָה", "tr": "kotser neshima", "fr": "dyspnée", "theme": "Symptômes", "ex": []},
+    {"id": "sharharoret", "he": "סְחַרְחֹרֶת", "tr": "sharharoret", "fr": "vertige", "theme": "Symptômes", "ex": []},
+    {"id": "bhila", "he": "בְּחִילָה", "tr": "bhila", "fr": "nausée", "theme": "Symptômes", "ex": [
+      ["בְּחִילוֹת וַהֲקָאוֹת", "bhilot ve-haka'ot", "nausées et vomissements"]
+    ]},
+    {"id": "shiul", "he": "שִׁעוּל", "tr": "shi'ul", "fr": "toux", "theme": "Symptômes", "ex": [
+      ["שִׁעוּל עִם לֵיחָה", "shi'ul im leiha", "toux grasse"]
+    ]},
+    {"id": "prikha", "he": "פְּרִיחָה", "tr": "prikha", "fr": "éruption cutanée", "note": "racine פ-ר-ח", "theme": "Symptômes", "ex": [
+      ["פְּרִיחָה בָּעוֹר", "prikha ba-or", "éruption cutanée"],
+      ["פְּרִיחָה מְגָרֶדֶת", "prikha megaredet", "éruption prurigineuse"]
+    ]},
+
+    {"id": "mahalot-reka", "he": "מַחֲלוֹת רֶקַע", "tr": "mahalot reka", "fr": "antécédents médicaux", "theme": "Antécédents et terrain", "ex": []},
+    {"id": "regishut-litrufot", "he": "רְגִישׁוּת לִתְרוּפוֹת", "tr": "regishut li-trufot", "fr": "allergie médicamenteuse", "theme": "Antécédents et terrain", "ex": []},
+    {"id": "alergya", "he": "אַלֶּרְגְּיָה", "tr": "alergya", "fr": "allergie", "theme": "Antécédents et terrain", "ex": []},
+
+    {"id": "rofe", "he": "רוֹפֵא / רוֹפְאָה", "tr": "rofé, rof'a", "fr": "médecin (m. / f.)", "theme": "Soignants, patients, traitements", "ex": [
+      ["רוֹפֵא מִשְׁפָּחָה", "rofé mishpaha", "médecin de famille, MG"]
+    ]},
+    {"id": "refua", "he": "רְפוּאָה", "tr": "refu'a", "fr": "médecine", "note": "racine ר-פ-א", "theme": "Soignants, patients, traitements", "ex": []},
+    {"id": "hole", "he": "חוֹלֶה", "tr": "holé", "fr": "malade", "theme": "Soignants, patients, traitements", "ex": []},
+    {"id": "metupal", "he": "מְטֻפָּל", "tr": "metupal", "fr": "patient", "note": "« celui qui est soigné »", "theme": "Soignants, patients, traitements", "ex": []},
+    {"id": "trufa", "he": "תְּרוּפָה", "tr": "trufa", "fr": "médicament", "theme": "Soignants, patients, traitements", "ex": [
+      ["תְּרוּפוֹת קְבוּעוֹת", "trufot kvu'ot", "traitement habituel"]
+    ]},
+    {"id": "mirsham", "he": "מִרְשָׁם", "tr": "mirsham", "fr": "ordonnance", "theme": "Soignants, patients, traitements", "ex": []},
+
+    {"id": "ma-hevi", "he": "מַה הֵבִיא אוֹתְךָ הַיּוֹם?", "tr": "ma hevi otkha hayom", "fr": "qu'est-ce qui vous amène ?", "theme": "En consultation", "ex": []},
+    {"id": "eifo-koev", "he": "אֵיפֹה כּוֹאֵב לְךָ / לָךְ?", "tr": "eifo ko'ev lekha / lakh", "fr": "où avez-vous mal ? (m. / f.)", "theme": "En consultation", "ex": []},
+    {"id": "mimatay", "he": "מִמָּתַי?", "tr": "mi-matay", "fr": "depuis quand ?", "theme": "En consultation", "ex": []},
+    {"id": "yesh-lekha-alergya", "he": "יֵשׁ לְךָ אַלֶּרְגְּיָה לִתְרוּפוֹת?", "tr": "yesh lekha alergya li-trufot", "fr": "êtes-vous allergique à des médicaments ?", "theme": "En consultation", "ex": []},
+    {"id": "tinshom", "he": "תִּנְשֹׁם / תִּנְשְׁמִי עָמֹק", "tr": "tinshom / tinshemi amok", "fr": "respirez fort (m. / f.)", "theme": "En consultation", "ex": []},
+
+    {"id": "beit-holim", "he": "בֵּית חוֹלִים", "tr": "beit holim", "fr": "hôpital", "theme": "Système de santé israélien", "ex": []},
+    {"id": "kupat-holim", "he": "קֻפַּת חוֹלִים", "tr": "kupat holim", "fr": "caisse d'assurance maladie", "theme": "Système de santé israélien", "ex": []},
+    {"id": "hafnaya", "he": "הַפְנָיָה", "tr": "hafnaya", "fr": "lettre d'adressage", "theme": "Système de santé israélien", "ex": []},
+    {"id": "mikhtav-shihrur", "he": "מִכְתַּב שִׁחְרוּר", "tr": "mikhtav shihrur", "fr": "compte-rendu de sortie", "theme": "Système de santé israélien", "ex": []},
+    {"id": "ishpuz", "he": "אִשְׁפּוּז", "tr": "ishpuz", "fr": "hospitalisation", "note": "racine א-ש-פ-ז", "theme": "Système de santé israélien", "ex": [
+      ["הוּא מְאֻשְׁפָּז בַּפְּנִימִית", "hu me'ushpaz ba-pnimit", "il est hospitalisé en médecine interne"],
+      ["אִשְׁפּוּז יוֹם", "ishpuz yom", "hôpital de jour"]
+    ]},
+
+    {"id": "sukeret", "he": "סוּכֶּרֶת", "tr": "sukeret", "fr": "diabète", "theme": "Maladies et diagnostics", "ex": [
+      ["סוּכֶּרֶת סוּג 2", "sukeret sug shtayim", "diabète de type 2"],
+      ["סוּכֶּרֶת לֹא מְאֻזֶּנֶת", "sukeret lo me'uzenet", "diabète déséquilibré"]
+    ]},
+
+    {"id": "bdikat-dam", "he": "בְּדִיקַת דָּם", "tr": "bdikat dam", "fr": "prise de sang, analyse sanguine", "note": "racine ב-ד-ק", "theme": "Examens", "ex": [
+      ["סְפִירַת דָּם", "sfirat dam", "NFS"],
+      ["תּוֹצָאוֹת הַבְּדִיקוֹת", "totsa'ot ha-bdikot", "résultats des examens"]
+    ]},
+
+    {"id": "tsilum", "he": "צִלּוּם", "tr": "tsilum", "fr": "imagerie, radiographie", "note": "racine צ-ל-ם", "theme": null, "added": "2026-11-23", "ex": [
+      ["צִלּוּם חָזֶה", "tsilum haze", "radio thoracique"],
+      ["הַפְנָיָה לְצִלּוּם", "hafnaya le-tsilum", "bon de radio"]
+    ]},
+    {"id": "zrika", "he": "זְרִיקָה", "tr": "zrika", "fr": "injection, piqûre", "note": "racine ז-ר-ק", "theme": null, "added": "2026-11-23", "ex": [
+      ["זְרִיקָה תּוֹךְ־שְׁרִירִית", "zrika tokh-shririt", "injection IM"],
+      ["זְרִיקַת אִינְסוּלִין", "zrikat insulin", "injection d'insuline"]
+    ]},
+    {"id": "keva", "he": "קֵבָה", "tr": "keva", "fr": "estomac", "note": "féminin", "theme": null, "added": "2026-11-24", "ex": [
+      ["כִּיב קֵבָה", "kiv keva", "ulcère gastrique"],
+      ["עַל קֵבָה רֵיקָה", "al keva reka", "à jeun"]
+    ]},
+    {"id": "tor", "he": "תּוֹר", "tr": "tor", "fr": "rendez-vous", "note": "pl. תּוֹרִים", "theme": null, "added": "2026-11-24", "ex": [
+      ["לִקְבֹּעַ תּוֹר", "likbo'a tor", "prendre rendez-vous"],
+      ["תּוֹר לְרוֹפֵא מוּמְחֶה", "tor le-rofé mumhe", "rendez-vous chez un spécialiste"]
+    ]},
+    {"id": "yeter-lahats-dam", "he": "יֶתֶר לַחַץ דָּם", "tr": "yeter lahats dam", "fr": "hypertension artérielle", "note": "abr. יל״ד", "theme": null, "added": "2026-11-25", "ex": [
+      ["יל״ד מְאֻזָּן תַּחַת טִפּוּל", "yeter lahats dam me'uzan tahat tipul", "HTA équilibrée sous traitement"],
+      ["תְּרוּפוֹת לְהוֹרָדַת לַחַץ דָּם", "trufot le-horadat lahats dam", "antihypertenseurs"]
+    ]},
+    {"id": "shilshul", "he": "שִׁלְשׁוּל", "tr": "shilshul", "fr": "diarrhée", "note": "pl. שִׁלְשׁוּלִים, racine quadrilitère ש-ל-ש-ל", "theme": null, "added": "2026-11-25", "ex": [
+      ["שִׁלְשׁוּל דָּמִי", "shilshul dami", "diarrhée sanglante"],
+      ["כַּמָּה יְצִיאוֹת בַּיּוֹם?", "kama yetsi'ot ba-yom", "combien de selles par jour ?"]
+    ]},
+    {"id": "hisun", "he": "חִסּוּן", "tr": "hisun", "fr": "vaccination, vaccin", "note": "pl. חִסּוּנִים, racine ח-ס-ן", "theme": null, "added": "2026-11-26", "ex": [
+      ["הִתְחַסַּנְתָּ נֶגֶד שַׁפַּעַת הַשָּׁנָה?", "hitkhasanta neged shapa'at ha-shana", "vous êtes-vous vacciné contre la grippe cette année ?"],
+      ["פִּנְקַס חִסּוּנִים", "pinkas hisunim", "carnet de vaccination"]
+    ]},
+    {"id": "mifrak", "he": "מִפְרָק", "tr": "mifrak", "fr": "articulation", "note": "pl. מִפְרָקִים, racine פ-ר-ק", "theme": null, "added": "2026-11-26", "ex": [
+      ["כְּאֵבֵי מִפְרָקִים", "ke'evei mifrakim", "arthralgies"],
+      ["דַּלֶּקֶת מִפְרָקִים שִׁגְרוֹנִית", "daleket mifrakim shigronit", "polyarthrite rhumatoïde"]
+    ]}
+  ],
+  "grammar": [
+    {"id": "smikhout", "title": "סְמִיכוּת — l'état construit", "body": [
+      "Le 1er nom se contracte : ה final → ת (סְפִיקָה → סְפִיקַת), pluriel ים → י (חוֹלִים → חוֹלֵי סוּכֶּרֶת, les diabétiques).",
+      "L'article se met sur le 2e nom seulement : בֵּית הַחוֹלִים, jamais ~~הַבֵּית חוֹלִים~~.",
+      "L'adjectif s'accorde avec le 1er nom : אִי סְפִיקַת לֵב כְּרוֹנִית (féminin, accordé avec סְפִיקָה)."
+    ]},
+    {"id": "accord-interlocuteur", "title": "Accord selon le genre de l'interlocuteur", "body": [
+      "En consultation, on accorde selon la personne à qui on parle : לְךָ / לָךְ, תִּנְשֹׁם / תִּנְשְׁמִי. C'est l'erreur la plus fréquente au début."
+    ]},
+    {"id": "racines", "title": "Les racines", "body": [
+      "Trois consonnes forment une famille de mots : ר-פ-א donne רוֹפֵא, רְפוּאָה, תְּרוּפָה. Et כ-ב-ד donne כָּבֵד (foie) et כָּבֵד (lourd)."
+    ]},
+    {"id": "pual-hufal", "title": "Passif pu'al / huf'al dans les comptes-rendus", "body": [
+      "Le style écrit médical préfère le passif sans agent : pu'al (passif du pi'el, voyelle u-a) et huf'al (passif du hif'il, préfixe הֻ). Ex. : הַמְּטֻפָּל הֻפְנָה לְמִיּוּן (le patient a été adressé aux urgences) ; אֻבְחַן בְּסוּכֶּרֶת (il a été diagnostiqué diabétique) ; הֻחְלַט לְאַשְׁפְּזוֹ (il a été décidé de l'hospitaliser).",
+      "À l'oral, on dit plutôt : הִפְנוּ אוֹתוֹ, אִבְחֲנוּ אוֹתוֹ (3e pers. pl. impersonnelle). Le participe pu'al donne des noms : מְטֻפָּל, מְאֻזָּן."
+    ]},
+    {"id": "futur-injonction", "title": "Futur d'injonction et interdiction en consultation", "body": [
+      "À l'oral, on donne les consignes au futur, pas à l'impératif (שְׁכַב sonne sec) : תִּשְׁכַּב עַל הַגַּב (allongez-vous sur le dos), תִּפְתַּח אֶת הַפֶּה (ouvrez la bouche).",
+      "L'interdiction ponctuelle = אַל + futur, jamais לֹא + impératif : אַל תֹּאכַל לִפְנֵי הַבְּדִיקָה. À l'écrit (notices, consignes), יֵשׁ / אֵין + infinitif : יֵשׁ לִטֹּל אַחֲרֵי הָאֹכֶל, אֵין לִנְהֹג."
+    ]},
+    {"id": "relatives", "title": "Propositions relatives : שֶׁ, אֲשֶׁר, הַ + participe", "added": "2026-11-23", "body": [
+      "Avec une préposition, le pronom de rappel est obligatoire : הַתְּרוּפָה שֶׁאַתָּה רָגִישׁ לָהּ (le médicament auquel vous êtes allergique). Objet direct : rappel facultatif, on l'omet (הַתְּרוּפָה שֶׁאַתָּה לוֹקֵחַ).",
+      "À l'écrit, אֲשֶׁר remplace שֶׁ, et הַ + participe remplace שֶׁ + présent : מְטֻפָּל בֶּן 67 אֲשֶׁר הֻפְנָה לְמִיּוּן ; הַמְּטֻפָּל הַנּוֹטֵל אַסְפִּירִין."
+    ]},
+    {"id": "nifal", "title": "Nif'al : le passif du pa'al dans les comptes-rendus", "added": "2026-11-24", "body": [
+      "Le nif'al (préfixe נִ au passé, voyelles i-a) est le passif du pa'al. C'est le binyan des conclusions d'examen : נִשְׁלַל שֶׁבֶר (fracture exclue), לֹא נִמְצְאוּ מִמְצָאִים חֲרִיגִים (pas d'anomalie retrouvée), הַמְּטֻפָּל נִבְדַּק בַּמִּיּוּן (le patient a été examiné aux urgences).",
+      "Présent נִבְדָּק, futur יִבָּדֵק : le dagesh compense le נ assimilé. Sens moyen aussi : נִפְגַּע בִּתְאוּנַת דְּרָכִים (blessé dans un accident de la route)."
+    ]},
+    {"id": "hitpael", "title": "Hitpa'el : les verbes de l'anamnèse", "added": "2026-11-25", "body": [
+      "Le hitpa'el (passé הִתְ-, présent מִתְ-) exprime le réfléchi ou un changement d'état vécu par le patient : מִתְלוֹנֵן עַל כְּאֵבֵי בֶּטֶן (se plaint de douleurs abdominales), הִתְעַלֵּף בַּבַּיִת (a fait un malaise à domicile), הִתְפַּתֵּחַ חֹם (une fièvre est apparue).",
+      "Métathèse : si la racine commence par ס / שׁ / צ / ז, le ת passe après la 1re radicale : הִשְׁתַּעֵל (a toussé), הִצְטַנֵּן (s'est enrhumé, ת → ט), הִזְדַּקֵּן (a vieilli, ת → ד)."
+    ]},
+    {"id": "smikhout-adjectivale", "title": "Smikhout adjectivale : חֲסַר הַכָּרָה, דַּל שׁוּמָן", "added": "2026-11-26", "body": [
+      "Un adjectif à l'état construit + un nom = « dépourvu de / pauvre en / sans » : חֲסַר הַכָּרָה (sans connaissance), דַּל שׁוּמָן (pauvre en graisses), נְטוּל גְּלוּטֶן (sans gluten). Mêmes règles que la smikhout nominale : contraction du 1er mot, article sur le 2e seulement.",
+      "L'adjectif s'accorde avec le patient : הוּא חֲסַר הַכָּרָה / הִיא חַסְרַת הַכָּרָה / הֵם חַסְרֵי הַכָּרָה. Registre écrit et soutenu ; à l'oral : הוּא לֹא בְּהַכָּרָה."
+    ]}
+  ],
+  "lessons": [
+    {"date": "2026-11-23", "words": ["tsilum", "zrika"], "grammar": "relatives"},
+    {"date": "2026-11-24", "words": ["keva", "tor"], "grammar": "nifal"},
+    {"date": "2026-11-25", "words": ["yeter-lahats-dam", "shilshul"], "grammar": "hitpael"},
+    {"date": "2026-11-26", "words": ["hisun", "mifrak"], "grammar": "smikhout-adjectivale"}
+  ],
+  "quizzes": [
+    {"date": "2026-11-20", "questions": [
+      {"k": "Hébreu → français", "p": "Que signifie :", "he": "כָּבֵד שׁוּמָנִי", "o": ["Hépatite", "Stéatose hépatique", "Cirrhose", "Hépatomégalie"], "a": 1, "x": "שׁוּמָנִי = gras (de שׁוּמָן, graisse). L'hépatite se dit דַּלֶּקֶת כָּבֵד."},
+      {"k": "Français → hébreu", "p": "Insuffisance rénale", "o": ["אַבְנֵי כְּלָיוֹת", "אִי סְפִיקַת לֵב", "אִי סְפִיקַת כְּלָיוֹת", "דַּלֶּקֶת כְּלָיוֹת"], "a": 2, "r": true, "x": "סְפִיקָה passe à l'état construit סְפִיקַת + כְּלָיוֹת. אַבְנֵי כְּלָיוֹת = lithiase, דַּלֶּקֶת כְּלָיוֹת = néphrite."},
+      {"k": "Phrase correcte", "p": "Diabète déséquilibré", "o": ["סוּכֶּרֶת לֹא מְאֻזָּן", "סוּכֶּרֶת לֹא מְאֻזֶּנֶת", "סוּכֶּרֶת לֹא מְאֻזָּנִים", "סוּכֶּרֶת לֹא אִזּוּן"], "a": 1, "r": true, "x": "סוּכֶּרֶת est féminin singulier : le participe pu'al s'accorde en מְאֻזֶּנֶת."},
+      {"k": "Compléter", "p": "Il est hospitalisé en médecine interne :", "he": "הוּא ___ בַּפְּנִימִית", "o": ["מְאַשְׁפֵּז", "אִשְׁפּוּז", "מְאֻשְׁפֶּזֶת", "מְאֻשְׁפָּז"], "a": 3, "r": true, "x": "Participe pu'al masculin : מְאֻשְׁפָּז. מְאַשְׁפֵּז = qui hospitalise (actif) ; מְאֻשְׁפֶּזֶת = féminin."},
+      {"k": "Hébreu → français", "p": "Que signifie :", "he": "פְּרִיחָה מְגָרֶדֶת", "o": ["Éruption fébrile", "Plaie surinfectée", "Éruption prurigineuse", "Prurit sans lésion"], "a": 2, "x": "מְגָרֶדֶת = qui gratte (pi'el de ג-ר-ד), au féminin comme פְּרִיחָה."},
+      {"k": "Hébreu → français", "p": "Que signifie :", "he": "סְפִירַת דָּם", "o": ["Groupe sanguin", "NFS", "Glycémie", "Tension artérielle"], "a": 1, "x": "סְפִירָה = comptage (ס-פ-ר) : numération sanguine. La tension artérielle se dit לַחַץ דָּם."},
+      {"k": "Compte-rendu", "p": "« Le patient a été adressé aux urgences. »", "o": ["הַמְּטֻפָּל הִפְנָה לְמִיּוּן", "הַמְּטֻפָּל הֻפְנָה לְמִיּוּן", "הַמְּטֻפָּל יַפְנֶה לְמִיּוּן", "הַמְּטֻפָּל מַפְנֶה לְמִיּוּן"], "a": 1, "r": true, "x": "Passif huf'al : הֻפְנָה. Le hif'il הִפְנָה voudrait dire que c'est le patient qui a adressé quelqu'un."},
+      {"k": "Consultation", "p": "« Ne mangez pas avant l'examen » (à un homme)", "o": ["לֹא אֱכֹל לִפְנֵי הַבְּדִיקָה", "אַל אֱכֹל לִפְנֵי הַבְּדִיקָה", "אַל תֹּאכַל לִפְנֵי הַבְּדִיקָה", "לֹא אוֹכֵל לִפְנֵי הַבְּדִיקָה"], "a": 2, "r": true, "x": "Interdiction ponctuelle = אַל + futur 2e personne. Jamais de négation devant l'impératif."},
+      {"k": "Smikhout · révision", "p": "« L'hôpital » (défini)", "o": ["הַבֵּית חוֹלִים", "הַבֵּית הַחוֹלִים", "בֵּית הַחוֹלִים", "בֵּית חוֹלִים הַ"], "a": 2, "r": true, "x": "À l'état construit, l'article ne se met que sur le 2e nom."},
+      {"k": "Hébreu → français · révision", "p": "Que signifie :", "he": "הַפְנָיָה", "o": ["Ordonnance", "Compte-rendu de sortie", "Arrêt de travail", "Lettre d'adressage"], "a": 3, "x": "Même racine que הֻפְנָה (פ-נ-ה). Ordonnance = מִרְשָׁם ; compte-rendu de sortie = מִכְתַּב שִׁחְרוּר."}
+    ]}
+  ]
+}
