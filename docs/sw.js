@@ -1,5 +1,5 @@
 // Shell: cache first. Lessons data: network first, cache fallback (offline).
-var CACHE = "hm-v1";
+var CACHE = "hm-v2";
 var SHELL = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest",
   "fonts/frank-ruhl-libre-hebrew-400-normal.woff2",

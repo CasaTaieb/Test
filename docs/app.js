@@ -49,6 +49,7 @@
     speak: '<svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
     prev: '<svg viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></svg>',
     next: '<svg viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></svg>',
+    cloud: '<svg viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 9z"/></svg>',
     chev: '<svg class="chev" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></svg>'
   };
 
@@ -106,12 +107,114 @@
     c = c || { box: 0 };
     c.box = ok ? Math.min(c.box + 1, INTERVALS.length - 1) : 1;
     c.due = addDays(todayStr(), ok ? INTERVALS[c.box] : 1);
+    c.ts = Date.now();
     s[id] = c; save("hm.srs", s);
     if (isNew) countNewSeen();
+    Sync.push();
   }
   function sessionSize() {
     return dueCards().length + Math.min(Math.max(newLeftToday(), 0), newCards().length);
   }
+
+  /* ---------- sync with a private GitHub repo ---------- */
+  var Sync = (function () {
+    var FILE = "progression.json", sha = null, timer = null, busy = false, last = load("hm.sync.last", null), err = null;
+    function config() { return load("hm.sync", null); }
+    function api(cfg, path, opts) {
+      opts = opts || {};
+      opts.headers = { "Authorization": "Bearer " + cfg.token, "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+      opts.cache = "no-store";
+      return fetch("https://api.github.com/repos/" + cfg.repo + path, opts);
+    }
+    function b64e(str) { return btoa(unescape(encodeURIComponent(str))); }
+    function b64d(str) { return decodeURIComponent(escape(atob(str.replace(/\s/g, "")))); }
+    function local() { return { v: 1, srs: load("hm.srs", {}), quiz: load("hm.quiz", {}), nw: load("hm.new", { d: "", n: 0 }), mode: load("hm.mode", "he") }; }
+    function merge(a, b) { // returns merged; per card the most recent grading wins
+      var m = { v: 1, srs: {}, quiz: {}, nw: a.nw, mode: a.mode };
+      [a.srs || {}, b.srs || {}].forEach(function (src) {
+        Object.keys(src).forEach(function (id) { var c = src[id]; if (!m.srs[id] || (c.ts || 0) > (m.srs[id].ts || 0)) m.srs[id] = c; });
+      });
+      [a.quiz || {}, b.quiz || {}].forEach(function (src) {
+        Object.keys(src).forEach(function (d) { m.quiz[d] = Math.max(m.quiz[d] == null ? -1 : m.quiz[d], src[d]); });
+      });
+      var x = a.nw || { d: "", n: 0 }, y = b.nw || { d: "", n: 0 };
+      m.nw = x.d === y.d ? { d: x.d, n: Math.max(x.n, y.n) } : (x.d > y.d ? x : y);
+      return m;
+    }
+    function same(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+    function done() { err = null; last = Date.now(); save("hm.sync.last", last); }
+    function fail(e) { err = e && e.message ? e.message : "Erreur réseau"; }
+    function friendly(r) {
+      if (r.status === 401) return new Error("Jeton refusé ou expiré.");
+      if (r.status === 403) return new Error("Le jeton n'a pas le droit d'écrire dans ce dépôt.");
+      if (r.status === 404) return new Error("Dépôt introuvable, ou le jeton n'y a pas accès.");
+      return new Error("GitHub a répondu " + r.status + ".");
+    }
+    function getRemote(cfg) {
+      return api(cfg, "/contents/" + FILE).then(function (r) {
+        if (r.status === 404) { sha = null; return null; }
+        if (!r.ok) throw friendly(r);
+        return r.json().then(function (j) { sha = j.sha; return JSON.parse(b64d(j.content)); });
+      });
+    }
+    function putRemote(cfg, data, retry) {
+      var body = { message: "Progression " + todayStr(), content: b64e(JSON.stringify(data)) };
+      if (sha) body.sha = sha;
+      return api(cfg, "/contents/" + FILE, { method: "PUT", body: JSON.stringify(body) }).then(function (r) {
+        if ((r.status === 409 || r.status === 422) && !retry) return pull(true, true);
+        if (!r.ok) throw friendly(r);
+        return r.json().then(function (j) { sha = j.content.sha; done(); });
+      });
+    }
+    // Fetch remote, merge with local, write back whichever side is behind.
+    function pull(force, isRetry) {
+      var cfg = config();
+      if (!cfg || (busy && !force)) return Promise.resolve();
+      busy = true;
+      return getRemote(cfg).then(function (remote) {
+        var loc = local(), merged = remote ? merge(loc, remote) : loc;
+        var localChanged = !same({ s: merged.srs, q: merged.quiz, n: merged.nw }, { s: loc.srs, q: loc.quiz, n: loc.nw });
+        if (localChanged) {
+          save("hm.srs", merged.srs); save("hm.quiz", merged.quiz); save("hm.new", merged.nw);
+          if (!session && !quizState) route();
+        }
+        var remoteBehind = !remote || !same({ s: merged.srs, q: merged.quiz, n: merged.nw }, { s: remote.srs, q: remote.quiz, n: remote.nw });
+        return remoteBehind ? putRemote(cfg, merged, isRetry) : done();
+      }).catch(fail).then(function () { busy = false; refreshIcon(); });
+    }
+    function push() {
+      if (!config()) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () { pull(); }, 1500);
+    }
+    function connect(repo, token) {
+      if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return Promise.reject(new Error("Format attendu : propriétaire/dépôt"));
+      if (!token) return Promise.reject(new Error("Collez le jeton."));
+      var cfg = { repo: repo, token: token };
+      return api(cfg, "").then(function (r) {
+        if (!r.ok) throw friendly(r);
+        return r.json();
+      }).then(function (j) {
+        if (!j.private) throw new Error("Ce dépôt est public : utilisez un dépôt privé.");
+        save("hm.sync", cfg); sha = null;
+        return pull(true).then(function () { if (err) throw new Error(err); });
+      });
+    }
+    function disconnect() { try { localStorage.removeItem("hm.sync"); localStorage.removeItem("hm.sync.last"); } catch (e) {} last = null; err = null; refreshIcon(); }
+    function status() {
+      if (!config()) return { kind: "off", label: "Non configurée" };
+      if (err) return { kind: "err", label: err };
+      if (!last) return { kind: "off", label: "En attente" };
+      var d = new Date(last);
+      return { kind: "ok", label: "Synchronisée à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) +
+        (new Date().toDateString() === d.toDateString() ? "" : " le " + d.toLocaleDateString("fr-FR")) };
+    }
+    function refreshIcon() {
+      var a = document.querySelector('a[href="#/sauvegarde"]');
+      if (a) { var st = status(); a.className = "icon-btn sync-" + st.kind; a.setAttribute("aria-label", "Sauvegarde : " + st.label); }
+    }
+    return { config: config, pull: pull, push: push, connect: connect, disconnect: disconnect, status: status };
+  })();
 
   /* ---------- word card ---------- */
   function wordCard(v) {
@@ -187,7 +290,7 @@
   function viewReview() {
     var mode = load("hm.mode", "he");
     if (!session || (!session.queue.length && session.total === 0)) startSession();
-    var head = "<h1>Réviser</h1>" +
+    var head = reviewTitle() +
       '<div class="seg" role="group" aria-label="Sens">' +
       '<button data-mode="he" aria-pressed="' + (mode === "he") + '">Hébreu → français</button>' +
       '<button data-mode="fr" aria-pressed="' + (mode === "fr") + '">Français → hébreu</button></div>';
@@ -195,7 +298,7 @@
     if (!session.queue.length) {
       var quizzes = DATA.quizzes.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
       var best = load("hm.quiz", {});
-      view.innerHTML = "<h1>Réviser</h1>" +
+      view.innerHTML = reviewTitle() +
         '<div class="card empty"><p style="font-size:20px;font-weight:600">' + (session.total ? "Session terminée" : "Tout est à jour") + "</p>" +
         '<p class="muted small" style="margin-top:6px">' + (session.total ? session.total + " cartes revues. " : "") + "Revenez demain pour la suite.</p></div>" +
         (quizzes.length ? "<h2>Quiz</h2><ul class=\"list\">" + quizzes.map(function (q) {
@@ -229,6 +332,38 @@
       '<div style="margin-top:16px">' + (session.shown
         ? '<div class="btn-row"><button class="btn bad" data-grade="0">À revoir</button><button class="btn ok" data-grade="1">Je savais</button></div>'
         : '<button class="btn" data-show>Afficher la réponse</button>') + "</div>";
+  }
+
+  function reviewTitle() {
+    var st = Sync.status();
+    return '<div class="head-row"><h1>Réviser</h1><a class="icon-btn sync-' + st.kind + '" href="#/sauvegarde" aria-label="Sauvegarde : ' + esc(st.label) + '" style="margin-bottom:28px">' + ICON.cloud + "</a></div>";
+  }
+
+  /* Backup view */
+  function viewBackup() {
+    var cfg = Sync.config(), st = Sync.status();
+    var html = '<button class="back" data-back>' + ICON.prev + "Retour</button><h1>Sauvegarde</h1>" +
+      '<p class="muted" style="margin:-12px 0 24px">Votre progression est copiée dans un dépôt GitHub privé. Si vous supprimez l\'app, reconnectez-la avec le même jeton : tout revient.</p>';
+    if (cfg) {
+      html += '<div class="card stat"><div><div class="sync-' + st.kind + '" style="font-weight:600">' + esc(st.label) + '</div><div class="muted small">' + esc(cfg.repo) + "</div></div></div>" +
+        '<div class="stack" style="margin-top:16px"><button class="btn" data-sync-now>Synchroniser maintenant</button>' +
+        '<button class="btn secondary" data-sync-off>Déconnecter cet appareil</button></div>';
+    } else {
+      html += '<form id="sync-form" class="stack" autocomplete="on">' +
+        '<label class="field"><span>Dépôt privé</span><input name="username" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" value="casataieb/hebreu-progression"></label>' +
+        '<label class="field"><span>Jeton d\'accès</span><input name="password" type="password" autocomplete="current-password" placeholder="github_pat_…" required></label>' +
+        '<p id="sync-msg" class="small" style="color:var(--bad);margin:0;min-height:1.5em"></p>' +
+        '<button class="btn" type="submit">Connecter</button></form>';
+    }
+    view.innerHTML = html;
+    var f = document.getElementById("sync-form");
+    if (f) f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var btn = f.querySelector("button"), msg = document.getElementById("sync-msg");
+      btn.disabled = true; btn.textContent = "Connexion…"; msg.textContent = "";
+      Sync.connect(f.username.value.trim(), f.password.value.trim()).then(function () { viewBackup(); })
+        .catch(function (err) { msg.textContent = err.message; btn.disabled = false; btn.textContent = "Connecter"; });
+    });
   }
 
   /* Lexicon */
@@ -298,7 +433,7 @@
     if (s.i >= Q.length) {
       var score = s.res.filter(function (r) { return r.ok; }).length;
       var bests = load("hm.quiz", {});
-      if (bests[date] == null || score > bests[date]) { bests[date] = score; save("hm.quiz", bests); }
+      if (bests[date] == null || score > bests[date]) { bests[date] = score; save("hm.quiz", bests); Sync.push(); }
       var verdict = score === Q.length ? "Sans faute." : score >= 8 ? "Solide. Revoyez les erreurs ci-dessous." :
         score >= 6 ? "Moyen. Les erreurs ci-dessous sont à reprendre." : "Insuffisant. Reprenez la semaine dans le lexique.";
       var show = function (q, k) { return q.r ? heSpan(q.o[k]) : esc(q.o[k]); };
@@ -337,6 +472,8 @@
     if (!t) return;
     if (t.hasAttribute("data-go")) { location.hash = t.getAttribute("data-go"); return; }
     if (t.hasAttribute("data-back")) { if (history.length > 1) history.back(); else location.hash = "#/aujourdhui"; return; }
+    if (t.hasAttribute("data-sync-now")) { t.disabled = true; t.textContent = "Synchronisation…"; Sync.pull(true).then(viewBackup, viewBackup); return; }
+    if (t.hasAttribute("data-sync-off")) { if (confirm("Déconnecter cet appareil ? La copie sur GitHub est conservée.")) { Sync.disconnect(); viewBackup(); } return; }
     if (t.hasAttribute("data-mode")) { save("hm.mode", t.getAttribute("data-mode")); if (session) session.shown = false; viewReview(); return; }
     if (t.hasAttribute("data-show")) { session.shown = true; viewReview(); return; }
     if (t.hasAttribute("data-grade")) {
@@ -360,7 +497,7 @@
     var h = location.hash.replace(/^#\/?/, "");
     var parts = h.split("?")[0].split("/"), tab = parts[0] || "aujourdhui";
     var q = (h.split("?q=")[1] || "");
-    var navTab = { mot: "lexique", quiz: "reviser" }[tab] || tab;
+    var navTab = { mot: "lexique", quiz: "reviser", sauvegarde: "reviser" }[tab] || tab;
     document.querySelectorAll(".tabs a").forEach(function (a) {
       if (a.getAttribute("data-tab") === navTab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
@@ -371,6 +508,7 @@
       case "mot": viewWord(decodeURIComponent(parts[1] || "")); break;
       case "grammaire": viewGrammar(); break;
       case "quiz": viewQuiz(parts[1]); break;
+      case "sauvegarde": viewBackup(); break;
       default: viewToday(parts[1]);
     }
     if (tab !== "reviser" || !session) window.scrollTo(0, 0);
@@ -381,7 +519,9 @@
     DATA = json;
     ["vocab", "grammar", "lessons", "quizzes", "themes"].forEach(function (k) { if (!Array.isArray(DATA[k])) DATA[k] = []; });
     route();
+    Sync.pull();
   }
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible" && DATA) Sync.pull(); });
   fetch("data/lecons.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(boot)

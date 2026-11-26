@@ -171,4 +171,13 @@ details.gram-item .gram-body p+p{margin-top:10px}
 .back{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:17px;margin:-6px 0 18px -4px;border:0;background:none;cursor:pointer;padding:4px}
 .back svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
+/* Sync */
+.sync-ok{color:var(--ok)} .sync-err{color:var(--bad)} .sync-off{color:var(--faint)}
+a.icon-btn.sync-ok,a.icon-btn.sync-err,a.icon-btn.sync-off{color:inherit}
+a.icon-btn.sync-ok svg{stroke:var(--ok)} a.icon-btn.sync-err svg{stroke:var(--bad)} a.icon-btn.sync-off svg{stroke:var(--faint)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field span{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.field input{border:0;background:var(--surface);border-radius:14px;height:50px;padding:0 16px;font:inherit;font-size:17px;color:var(--fg);-webkit-appearance:none;appearance:none}
+.field input:focus{outline:2px solid var(--accent);outline-offset:0}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
